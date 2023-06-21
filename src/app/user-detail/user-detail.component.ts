@@ -8,6 +8,7 @@ import {
   docData,
 } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
+import { User } from 'src/models/user.class';
 
 @Component({
   selector: 'app-user-detail',
@@ -16,13 +17,11 @@ import { Observable } from 'rxjs';
 })
 export class UserDetailComponent implements OnInit {
   firestore: Firestore = inject(Firestore);
-  users$: Observable<any[]>;
+  users$: Observable<any[]> | undefined;
   userId = '';
+  user: User = new User();
 
-  constructor(private route: ActivatedRoute) {
-    const aCollection = collection(this.firestore, 'user', this.userId);
-    this.users$ = collectionData(aCollection);
-  }
+  constructor(private route: ActivatedRoute) {}
 
   ngOnInit(): void {
     this.userId = this.route.snapshot.params['id'];
@@ -33,6 +32,14 @@ export class UserDetailComponent implements OnInit {
   getUser() {
     const userRef: any = doc(this.firestore, 'user', this.userId);
     this.users$ = docData(userRef);
-    console.log('Current User is', this.users$);
+
+    this.users$.subscribe((user) => {
+      this.user = new User(user);
+      console.log('current User is ', user);
+    });
   }
+
+  openAdressDialog() {}
+  editMenu() {}
+  editUserDetail() {}
 }
