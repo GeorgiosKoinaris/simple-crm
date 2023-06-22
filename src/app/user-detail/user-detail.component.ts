@@ -1,14 +1,11 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import {
-  Firestore,
-  collection,
-  collectionData,
-  doc,
-  docData,
-} from '@angular/fire/firestore';
+import { Firestore, doc, docData } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { User } from 'src/models/user.class';
+import { DialogEditAddressComponent } from '../dialog-edit-address/dialog-edit-address.component';
+import { DialogEditUserComponent } from '../dialog-edit-user/dialog-edit-user.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-user-detail',
@@ -21,7 +18,7 @@ export class UserDetailComponent implements OnInit {
   userId = '';
   user: User = new User();
 
-  constructor(private route: ActivatedRoute) {}
+  constructor(private route: ActivatedRoute, public dialog: MatDialog) {}
 
   ngOnInit(): void {
     this.userId = this.route.snapshot.params['id'];
@@ -39,7 +36,15 @@ export class UserDetailComponent implements OnInit {
     });
   }
 
-  openAdressDialog() {}
-  editMenu() {}
-  editUserDetail() {}
+  editMenu() {
+    const dialog = this.dialog.open(DialogEditAddressComponent);
+    dialog.componentInstance.user = new User(this.user.toJSON());
+    dialog.componentInstance.userId = this.userId;
+  }
+
+  editUserDetail() {
+    const dialog = this.dialog.open(DialogEditUserComponent);
+    dialog.componentInstance.user = new User(this.user.toJSON());
+    dialog.componentInstance.userId = this.userId;
+  }
 }
